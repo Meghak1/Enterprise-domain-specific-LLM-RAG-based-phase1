@@ -1,0 +1,81 @@
+error 
+
+===============================================================================================
+
+(AgentProject) C:\Enterprise-domain-specific-LLM-RAG-based-phase1>conda install faiss-cpu
+3 channel Terms of Service accepted
+Channels:
+ - defaults
+Platform: win-64
+Collecting package metadata (repodata.json): done
+Solving environment: failed
+
+PackagesNotFoundError: The following packages are not available from current channels:
+
+  - faiss-cpu
+
+Current channels:
+
+  - defaults
+
+To search for alternate channels that may provide the conda package you're
+looking for, navigate to
+
+    https://anaconda.org
+
+and use the search bar at the top of the page.
+
+
+Solution
+===============================================================
+Faiss works with pip, not with conda, if you are using conda environment, use pip install faiss-cpu to resolve the error
+
+
+
+error 2 
+=================================================================================
+
+(AgentProject) C:\Enterprise-domain-specific-LLM-RAG-based-phase1>conda install ollama                                                                          
+3 channel Terms of Service accepted                                                                                                                             
+Channels:
+ - defaults
+Platform: win-64
+Collecting package metadata (repodata.json): done
+Solving environment: failed
+
+PackagesNotFoundError: The following packages are not available from current channels:
+
+  - ollama
+
+Current channels:
+
+  - defaults
+
+To search for alternate channels that may provide the conda package you're
+looking for, navigate to
+
+    https://anaconda.org
+
+and use the search bar at the top of the page.
+
+
+Solution
+===================================================================================
+
+ollama does not work with conda installation command , use pip install ollama
+
+
+
+Error 3
+
+==================================================================================
+    )
+langchain_community.llms.ollama.OllamaEndpointNotFoundError: Ollama call failed with status code 404. Maybe your model is not found and you should pull the model with `ollama pull llama3`.
+
+
+
+Soultion
+=====================================================================================
+Install ollma locally, create the virtual environment and use 
+
+ollama pull llama3
