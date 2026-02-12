@@ -1,4 +1,6 @@
-error 
+ERRORS AND SOLUTION 
+
+Error1
 
 ===============================================================================================
 
@@ -32,7 +34,7 @@ Faiss works with pip, not with conda, if you are using conda environment, use pi
 
 
 
-error 2 
+Error 2 
 =================================================================================
 
 (AgentProject) C:\Enterprise-domain-specific-LLM-RAG-based-phase1>conda install ollama                                                                          
@@ -69,7 +71,7 @@ ollama does not work with conda installation command , use pip install ollama
 Error 3
 
 ==================================================================================
-    )
+
 langchain_community.llms.ollama.OllamaEndpointNotFoundError: Ollama call failed with status code 404. Maybe your model is not found and you should pull the model with `ollama pull llama3`.
 
 
@@ -79,3 +81,69 @@ Soultion
 Install ollma locally, create the virtual environment and use 
 
 ollama pull llama3
+
+
+
+Error 4
+
+=====================================================================================
+error: cannot pull with rebase: You have unstaged changes.
+
+
+Solution 
+=====================================================================================
+Local files modified but not commited
+
+git stash
+git pull origin main --rebase
+git stash pop
+
+
+
+Error 5
+=====================================================================================
+Editor opened during rebase
+.git/COMMIT_EDITMSG opened
+
+
+
+Solution
+========================================================================================
+Esc
+:wq
+Enter
+
+
+Error 6
+============================================================================================
+
+FileNotFoundError: Intel_architecture253665-089-sdm-vol-1.pdf not found
+
+Soultion
+============================================================================================
+Specify path name correctly
+
+
+Error 7
+=======================================================================================
+RuntimeError: CUDA out of memory
+
+Solution
+==========================================================================================
+Give a smaller chunk size
+
+
+Error 8
+===========================================================================================
+Connection refused http://localhost:11434
+
+
+Solution
+=========================================================================================
+ollama server is off, run in another terminal
+
+ollama serve
+ OR 
+ollama run llama3
+
+
