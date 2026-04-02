@@ -147,3 +147,514 @@ ollama serve
 ollama run llama3
 
 
+
+error 9 
+================================================================================================
+
+ValueError: Ollama call failed with status code 500. Details: {"error":"llama runner process has terminated: CUDA error"}
+
+File "C:\Enterprise-domain-specific-LLM-RAG-based-phase1\app.py", line 54, in <module>
+    result = qa_chain(query)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\retrieval_qa\base.py", line 159, in _call
+    answer = self.combine_documents_chain.run(
+        input_documents=docs,
+        question=question,
+        callbacks=_run_manager.get_child(),
+    )
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 632, in run
+    return self(kwargs, callbacks=callbacks, tags=tags, metadata=metadata)[
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\combine_documents\base.py", line 143, in _call
+    output, extra_return_dict = self.combine_docs(
+                                ~~~~~~~~~~~~~~~~~^
+        docs,
+        ^^^^^
+        callbacks=_run_manager.get_child(),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **other_keys,
+        ^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\combine_documents\stuff.py", line 263, in combine_docs
+    return self.llm_chain.predict(callbacks=callbacks, **inputs), {}
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 325, in predict
+    return self(kwargs, callbacks=callbacks)[self.output_key]
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 127, in _call
+    response = self.generate([inputs], run_manager=run_manager)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 139, in generate
+    return self.llm.generate_prompt(
+           ~~~~~~~~~~~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<2 lines>...
+        **self.llm_kwargs,
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 791, in generate_prompt
+    return self.generate(prompt_strings, stop=stop, callbacks=callbacks, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 1002, in generate
+    return self._generate_helper(
+           ~~~~~~~~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<3 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 817, in _generate_helper
+    self._generate(
+    ~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<3 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 437, in _generate
+    final_chunk = super()._stream_with_aggregation(
+        prompt,
+    ...<4 lines>...
+        **kwargs,
+    )
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 349, in _stream_with_aggregation
+    for stream_resp in self._create_generate_stream(prompt, stop, **kwargs):
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 194, in _create_generate_stream
+    yield from self._create_stream(
+               ~~~~~~~~~~~~~~~~~~~^
+        payload=payload,
+        ^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 273, in _create_stream
+    raise ValueError(
+    ...<2 lines>...
+    )
+
+
+
+reason
+
+=========================================================================================
+Your system tried to run Ollama on GPU
+But:
+GPU not supported / not enough VRAM
+CUDA misconfigured
+Model too large (llama3 default = heavy)
+
+Solution
+=================================================================================================
+
+set OLLAMA_NO_GPU=1 
+
+or 
+
+llm = Ollama(
+    model="phi3",
+    temperature=0.2
+)
+
+
+error 10
+======================================================================================================
+langchain_community.llms.ollama.OllamaEndpointNotFoundError: Ollama call failed with status code 404. Maybe your model is not found and you should pull the model with `ollama pull phi3`.
+
+File "C:\Enterprise-domain-specific-LLM-RAG-based-phase1\app.py", line 66, in <module>
+    result = qa_chain(query)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\retrieval_qa\base.py", line 159, in _call
+    answer = self.combine_documents_chain.run(
+        input_documents=docs,
+        question=question,
+        callbacks=_run_manager.get_child(),
+    )
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 632, in run
+    return self(kwargs, callbacks=callbacks, tags=tags, metadata=metadata)[
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\combine_documents\base.py", line 143, in _call
+    output, extra_return_dict = self.combine_docs(
+                                ~~~~~~~~~~~~~~~~~^
+        docs,
+        ^^^^^
+        callbacks=_run_manager.get_child(),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **other_keys,
+        ^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\combine_documents\stuff.py", line 263, in combine_docs
+    return self.llm_chain.predict(callbacks=callbacks, **inputs), {}
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 325, in predict
+    return self(kwargs, callbacks=callbacks)[self.output_key]
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 127, in _call
+    response = self.generate([inputs], run_manager=run_manager)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 139, in generate
+    return self.llm.generate_prompt(
+           ~~~~~~~~~~~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<2 lines>...
+        **self.llm_kwargs,
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 791, in generate_prompt
+    return self.generate(prompt_strings, stop=stop, callbacks=callbacks, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 1002, in generate
+    return self._generate_helper(
+           ~~~~~~~~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<3 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 817, in _generate_helper
+    self._generate(
+    ~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<3 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 437, in _generate
+    final_chunk = super()._stream_with_aggregation(
+        prompt,
+    ...<4 lines>...
+        **kwargs,
+    )
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 349, in _stream_with_aggregation
+    for stream_resp in self._create_generate_stream(prompt, stop, **kwargs):
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 194, in _create_generate_stream
+    yield from self._create_stream(
+               ~~~~~~~~~~~~~~~~~~~^
+        payload=payload,
+        ^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 266, in _create_stream
+    raise OllamaEndpointNotFoundError(
+    ...<3 lines>...
+    )
+
+
+
+error 11
+===================================================================================================================
+
+langchain_community.llms.ollama.OllamaEndpointNotFoundError: Ollama call failed with status code 404. Maybe your model is not found and you should pull the model with `ollama pull phi3`.
+
+File "C:\Enterprise-domain-specific-LLM-RAG-based-phase1\app.py", line 66, in <module>
+    result = qa_chain(query)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\retrieval_qa\base.py", line 159, in _call
+    answer = self.combine_documents_chain.run(
+        input_documents=docs,
+        question=question,
+        callbacks=_run_manager.get_child(),
+    )
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 632, in run
+    return self(kwargs, callbacks=callbacks, tags=tags, metadata=metadata)[
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\combine_documents\base.py", line 143, in _call
+    output, extra_return_dict = self.combine_docs(
+                                ~~~~~~~~~~~~~~~~~^
+        docs,
+        ^^^^^
+        callbacks=_run_manager.get_child(),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **other_keys,
+        ^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\combine_documents\stuff.py", line 263, in combine_docs
+    return self.llm_chain.predict(callbacks=callbacks, **inputs), {}
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 325, in predict
+    return self(kwargs, callbacks=callbacks)[self.output_key]
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\_api\deprecation.py", line 193, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 410, in __call__
+    return self.invoke(
+           ~~~~~~~~~~~^
+        inputs,
+        ^^^^^^^
+    ...<2 lines>...
+        include_run_info=include_run_info,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\base.py", line 165, in invoke
+    self._call(inputs, run_manager=run_manager)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 127, in _call
+    response = self.generate([inputs], run_manager=run_manager)
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain\chains\llm.py", line 139, in generate
+    return self.llm.generate_prompt(
+           ~~~~~~~~~~~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<2 lines>...
+        **self.llm_kwargs,
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 791, in generate_prompt
+    return self.generate(prompt_strings, stop=stop, callbacks=callbacks, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 1002, in generate
+    return self._generate_helper(
+           ~~~~~~~~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<3 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_core\language_models\llms.py", line 817, in _generate_helper
+    self._generate(
+    ~~~~~~~~~~~~~~^
+        prompts,
+        ^^^^^^^^
+    ...<3 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 437, in _generate
+    final_chunk = super()._stream_with_aggregation(
+        prompt,
+    ...<4 lines>...
+        **kwargs,
+    )
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 349, in _stream_with_aggregation
+    for stream_resp in self._create_generate_stream(prompt, stop, **kwargs):
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 194, in _create_generate_stream
+    yield from self._create_stream(
+               ~~~~~~~~~~~~~~~~~~~^
+        payload=payload,
+        ^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+File "C:\Users\Meghaa k\miniconda3\envs\AgentProject\Lib\site-packages\langchain_community\llms\ollama.py", line 266, in _create_stream
+    raise OllamaEndpointNotFoundError(
+    ...<3 lines>...
+    )
+
+Solution to error 10,11
+==================================================================================================================
+ollama pull phi3
+
+
+
+
+error 12
+====================================================================================================================
+
+🧠 Semiconductor RAG Assistant (Advanced)
+what is cache
+
+B
+A cache is a hardware or software component that stores data temporarily so future requests for that data can be served faster. It acts as a buffer between the CPU and main memory, storing frequently accessed data to speed up processing times by reducing delays caused by fetching this information from slower storage devices like RAM (Random Access Memory).
+
+In computing systems with complex cache architectures such as multi-level caches or set associative mappings, there are various instructions that manage the caching of temporal and non-temporal data. These include Cacheability Control Instructions which determine how a memory location is cached based on its access patterns (e.g., write-through vs. write-back), Caching Temporal Data versus Non-Temporal Data, wherein cache stores frequently accessed or recently used information for quicker retrieval in temporal data caching and non-temporal instructions bypass the cache hierarchy to store directly into memory when necessary (e.g., during streaming of large datasets).
+
+PREFETCHh Instructions are specialized commands that prefetch, i.e., load anticipated future data before it is explicitly requested by a program in order to reduce latency and improve performance. These instructions can be particularly useful for speculative execution or parallel processing where multiple threads may access different memory locations simultaneously.
+
+In the context of your question about EDX[31:3], this refers to reserved bits within an addressing mode, which is a way that processors use specific parts of their registers (like the logical processor's register set) for various purposes such as indexing cache or other operations like memory ordering. In this case, it seems these particular bits are not used in any given operation and remain untouched/reserved within EDX[31:3].
+
+In summary, a cache is an essential component of modern computing systems that helps improve performance by storing frequently accessed data for quicker retrieval when needed. Cacheability Control Instrus manage how this caching works based on the type of access (temporal or non-temporal), and PREFETCHh instructions help prefetch anticipated future data to further enhance system efficiency, particularly in complex multi-threaded environments where different threads may require separate memory locations.
+
+
+ Document Sources with Highlight
+ Page 10
+Highlight error: 'NoneType' object has no attribute 'split'
+
+View Text
+
+. . . . . . . . . . . . . . . . . 10-12 10.4.6 Cacheability Control, Prefetch, and Memory Ordering Instructions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10-12 10.4.6.1 Cacheability Control Instructions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10-12 10.4.6.2 Caching of Temporal vs. Non-Temporal Data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10-12 10.4.6.3 PREFETCHh Instructions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+ Page 459
+Highlight error: 'NoneType' object has no attribute 'split'
+
+ View Text
+
+0 = Direct mapped cache. 1 = A complex function is used to index the cache, potentially using all address bits. Logical Processor EDX[31:3] Reserved Reserved.
+
+🌐 Additional Resources
+AttributeError: 'NoneType' object has no attribute 'replace'
+Traceback:
+File "C:\Enterprise-domain-specific-LLM-RAG-based-phase1\app.py", line 281, in <module>
+    resources = get_resources(query)
+File "C:\Enterprise-domain-specific-LLM-RAG-based-phase1\app.py", line 198, in get_resources
+    q = query.replace(" ", "+")
+        ^^^^^^^^^^^^^
+Copy
+Ask Google
+Ask ChatGPT
+Ask about Intel architecture...
+
+reason========================================================================================
+In Streamlit:
+
+st.chat_input() returns None after first render
+But your code still tries to use query
+
+
+Solution
+============================================================================================================
+
+if "last_query" not in st.session_state:
+    st.session_state.last_query = None
+
+
+use try except block for most of the cases
