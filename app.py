@@ -1,11 +1,11 @@
 import os
 import fitz
-import logging
-import subprocess
 import time
 import gradio as gr
 import pyttsx3
+import speech_recognition as sr
 import matplotlib.pyplot as plt
+import threading
 
 from dataclasses import dataclass
 from langchain_community.vectorstores import FAISS
@@ -13,183 +13,225 @@ from langchain_community.llms import Ollama
 from langchain_huggingface import HuggingFaceEmbeddings
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Configuration class to store file paths
+
+# ================= CONFIG =================
+# Store file paths
 @dataclass
 class Config:
     PDF_PATH: str = "C://Enterprise-domain-specific-LLM-RAG-based-phase1//data//semiconductor//Intel_architecture253665-089-sdm-vol-1.pdf"
     VECTOR_DB_PATH: str = "vector_store"
 
-# Initialize configuration
 config = Config()
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
-
-# Load PDF document
+# Load PDF
 PDF_DOC = fitz.open(config.PDF_PATH)
 
-# Cache dictionary to store rendered pages for faster reuse
+# Cache for rendered pages
 PAGE_CACHE = {}
 
-# Initialize embedding model for converting text into vectors
+# Store chat history
+chat_history = []
+
+
+# ================= EMBEDDINGS =================
+# Convert text into vectors
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
-# Load FAISS vector database from local storage
+# Load FAISS vector database
 vectorstore = FAISS.load_local(
     config.VECTOR_DB_PATH,
     embeddings,
     allow_dangerous_deserialization=True
 )
 
-# Create retriever with top-k results set to 6
-retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
+# Retriever for top-k documents
+retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
-# Initialize LLM using Ollama with phi3 model
+
+# ================= LLM =================
+# Load local LLM model
 llm = Ollama(model="phi3")
 
-# Initialize text-to-speech engine
+
+# ================= TEXT TO SPEECH =================
+# Initialize engine
 engine = pyttsx3.init()
 
-# Function to convert text to speech
+# Set voice properties
+engine.setProperty('rate', 170)
+engine.setProperty('volume', 1.0)
+
+# Internal function for speaking (runs in thread)
+def _speak(text):
+    engine.stop()
+    engine.say(text)
+    engine.runAndWait()
+
+# Wrapper function to avoid blocking UI
 def speak_text(text):
-    engine.say(text)  # Queue the text to be spoken
-    engine.runAndWait()  # Execute speech
+    print("Speaking:", text)
+    thread = threading.Thread(target=_speak, args=(text,))
+    thread.start()
 
-# Function to render a PDF page as an image
-def render_page(page_num):
-    # Check if page already exists in cache
-    if page_num in PAGE_CACHE:
-        return PAGE_CACHE[page_num]
+# Stop speaking
+def stop_speaking():
+    engine.stop()
 
+
+# ================= SPEECH TO TEXT =================
+recognizer = sr.Recognizer()
+
+def voice_input():
     try:
-        # Get page from PDF
-        page = PDF_DOC[page_num]
-
-        # Convert page to image with scaling for better clarity
-        pix = page.get_pixmap(matrix=fitz.Matrix(3, 3))
-
-        # Save image locally
-        img_path = f"page_{page_num}.png"
-        pix.save(img_path)
-
-        # Store in cache
-        PAGE_CACHE[page_num] = img_path
-
-        return img_path
+        with sr.Microphone() as source:
+            audio = recognizer.listen(source, timeout=5)
+            return recognizer.recognize_google(audio)
     except:
-        # Return None if rendering fails
-        return None
+        return "Voice input failed"
 
-# Function to open a specific page in external PDF viewer
-def open_pdf_page(page_num):
-    try:
-        # Increment page number since viewer starts from 1
-        page_num = int(page_num) + 1
 
-        # Open PDF in Adobe Acrobat at specific page
-        subprocess.Popen([
-            "C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe",
-            "/A", f"page={page_num}",
-            config.PDF_PATH
-        ])
-    except:
-        # Fallback to default PDF opener
-        os.startfile(config.PDF_PATH)
+# ================= PDF RENDER =================
+# Convert PDF page to image and optionally highlight text
+def render_page(page_num, highlight_text=None):
+    page = PDF_DOC[page_num]
 
-# Function to compute evaluation metrics for RAG output
+    if highlight_text:
+        # Try to find and highlight part of answer
+        areas = page.search_for(highlight_text[:30])
+        for a in areas:
+            page.add_highlight_annot(a)
+
+    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+    path = f"page_{page_num}.png"
+    pix.save(path)
+
+    return path
+
+
+# ================= METRICS =================
+# Evaluate answer quality
 def compute_metrics(query, answer, docs):
     try:
-        # Convert query and answer into embeddings
-        query_emb = embeddings.embed_query(query)
-        answer_emb = embeddings.embed_query(answer)
+        q = embeddings.embed_query(query)
+        a = embeddings.embed_query(answer)
 
-        # Convert each document chunk into embeddings
-        doc_embs = [embeddings.embed_query(d.page_content) for d in docs]
+        context = " ".join([d.page_content for d in docs])
+        c = embeddings.embed_query(context)
 
-        # Combine all document text into a single context
-        context_text = " ".join([d.page_content for d in docs])
+        # Faithfulness
+        faithfulness = cosine_similarity([a], [c])[0][0]
 
-        # Generate embedding for combined context
-        context_emb = embeddings.embed_query(context_text)
+        # Answer relevance
+        answer_relevance = cosine_similarity([q], [a])[0][0]
 
-        # Compute similarity between answer and context
-        faithfulness = cosine_similarity([answer_emb], [context_emb])[0][0]
-
-        # Compute similarity between query and each document chunk
-        relevances = [
-            cosine_similarity([query_emb], [doc_emb])[0][0]
-            for doc_emb in doc_embs
+        # Context relevance
+        doc_scores = [
+            cosine_similarity([q], [embeddings.embed_query(d.page_content)])[0][0]
+            for d in docs
         ]
+        context_relevance = sum(doc_scores) / len(doc_scores)
 
-        # Average relevance score
-        avg_relevance = sum(relevances) / len(relevances)
+        # Coverage
+        coverage = min(1.0, context_relevance * 1.2)
 
-        # Compute similarity between query and answer
-        answer_relevance = cosine_similarity([query_emb], [answer_emb])[0][0]
+        # Final accuracy score
+        accuracy = (
+            0.4 * faithfulness +
+            0.3 * context_relevance +
+            0.3 * answer_relevance
+        )
 
-        # Return rounded metric values
         return {
-            "faithfulness": round(float(faithfulness), 3),
-            "context_relevance": round(float(avg_relevance), 3),
-            "answer_relevance": round(float(answer_relevance), 3)
+            "faithfulness": round(faithfulness, 3),
+            "context_relevance": round(context_relevance, 3),
+            "answer_relevance": round(answer_relevance, 3),
+            "context_coverage": round(coverage, 3),
+            "accuracy": round(accuracy, 3)
         }
 
     except:
-        # Return default values if any error occurs
-        return {
-            "faithfulness": 0,
-            "context_relevance": 0,
-            "answer_relevance": 0
-        }
+        return {}
 
-# Function to plot metric values as a bar chart
+
+# ================= GRAPH =================
+# Plot metrics
 def plot_metrics(metrics):
-    # Extract metric names and values
     names = list(metrics.keys())
     values = list(metrics.values())
 
-    # Create bar chart
-    plt.figure()
+    plt.figure(figsize=(6,4))
     plt.bar(names, values)
-    plt.ylim(0, 1)  # Set y-axis range
+    plt.xticks(rotation=30)
+    plt.ylim(0, 1)
 
-    # Save chart as image
     path = "metrics.png"
+    plt.tight_layout()
     plt.savefig(path)
     plt.close()
 
     return path
 
-# Main function to handle query processing using RAG
+
+# ================= RESOURCES =================
+# Suggest papers and links based on query
+def get_resources(query):
+    q = query.lower()
+
+    papers = []
+    github = []
+
+    if "rag" in q:
+        papers.append("https://arxiv.org/abs/2005.11401")
+        github.append("https://github.com/facebookresearch/rag")
+
+    if "embedding" in q:
+        papers.append("https://arxiv.org/abs/2212.10496")
+        github.append("https://github.com/FlagOpen/FlagEmbedding")
+
+    if not papers:
+        papers.append("https://arxiv.org/abs/2005.11401")
+
+    videos = [
+        "https://www.youtube.com/watch?v=T-D1OfcDW1M",
+        "https://www.youtube.com/watch?v=9AXP7tCI9PI"
+    ]
+
+    docs = [
+        "https://python.langchain.com/docs/",
+        "https://huggingface.co/docs"
+    ]
+
+    return papers, videos, github, docs
+
+
+# Format links for UI display
+def format_links(title, links):
+    return f"### {title}\n" + "\n".join([f"- {l}" for l in links])
+
+
+# ================= REPORT =================
+# Save answer and metrics into file
+def generate_report(answer, metrics):
+    text = f"Answer:\n{answer}\n\nMetrics:\n{metrics}"
+    file_path = "report.txt"
+
+    with open(file_path, "w") as f:
+        f.write(text)
+
+    return file_path
+
+
+# ================= MAIN RAG =================
 def ask(query):
-    # Start timer
-    start_time = time.time()
-
-    # Retrieve relevant document chunks
     docs = retriever.invoke(query)
+    docs = docs[:3]
 
-    # Filter out very small or weak chunks
-    filtered_docs = []
-    for d in docs:
-        if len(d.page_content.strip()) > 100:
-            filtered_docs.append(d)
+    context = "\n".join([d.page_content for d in docs])
 
-    # Keep top 3 chunks after filtering
-    docs = filtered_docs[:3]
-
-    # Record retrieval time
-    retrieval_time = time.time()
-
-    # Combine retrieved chunks into context
-    context = "\n\n".join([d.page_content for d in docs])
-
-    # Create prompt for LLM
     prompt = f"""
-Answer ONLY from the context below.
-If answer not found, say "Not found in document".
-Mention exact page numbers.
+Answer only from context.
 
 Context:
 {context}
@@ -198,113 +240,103 @@ Question:
 {query}
 """
 
-    # Generate answer using LLM
     answer = llm.invoke(prompt)
 
-    # Record end time
-    end_time = time.time()
+    metrics = compute_metrics(query, answer, docs)
+    graph = plot_metrics(metrics)
 
-    # Calculate base timing metrics
-    base_metrics = {
-        "response_time": round(end_time - start_time, 2),
-        "retrieval_time": round(retrieval_time - start_time, 2),
-        "generation_time": round(end_time - retrieval_time, 2),
-        "chunks": len(docs)
-    }
+    papers, videos, github, docs_links = get_resources(query)
 
-    # Compute RAG-specific metrics
-    rag_metrics = compute_metrics(query, answer, docs)
-
-    # Combine all metrics
-    all_metrics = {**base_metrics, **rag_metrics}
-
-    # Generate metrics graph
-    graph_path = plot_metrics(rag_metrics)
-
-    # Prepare image and info outputs
     images = []
     info = []
 
-    # Loop through retrieved documents
     for d in docs:
-        # Get page number from metadata
         page = d.metadata.get("page", 0)
+        img = render_page(page, answer)
+        images.append((img, f"Page {page}"))
 
-        # Render page as image
-        img = render_page(page)
+        info.append(d.page_content[:200])
 
-        if img:
-            # Create short snippet for display
-            snippet = d.page_content[:150].replace("\n", " ")
-            images.append((img, f"Page {page} | {snippet}..."))
+    chat_history.append((query, answer))
 
-        # Store detailed info
-        info.append({
-            "page": page,
-            "content": d.page_content[:500]
-        })
-
-    return answer, images, info, all_metrics, graph_path
-
-# Build Gradio UI
-with gr.Blocks(css="""
-body {background: black; color: white;}
-button {background: #0ea5e9 !important; color: white;}
-""") as demo:
-
-    # Title
-    gr.Markdown("## Grounded RAG based LLM Assistant for Semiconductor Industry")
-
-    # Input textbox for user query
-    query = gr.Textbox(label="Ask Question")
-
-    # Output textbox for answer
-    answer_box = gr.Textbox(label="Answer")
-
-    # Button to trigger text-to-speech
-    speak_btn = gr.Button("Speak")
-
-    # Gallery to display source pages
-    gallery = gr.Gallery(label="Source Pages")
-
-    # JSON display for page details
-    page_info = gr.JSON(label="Source Details")
-
-    # JSON display for metrics
-    metrics_box = gr.JSON(label="Metrics")
-
-    # Image display for graph
-    graph_output = gr.Image(label="Metrics Graph")
-
-    # Button to process query
-    btn = gr.Button("Ask")
-
-    # Function to process query
-    def process(q):
-        return ask(q)
-
-    # Function to speak answer
-    def speak(ans):
-        speak_text(ans)
-
-    # Function to open selected page from gallery
-    def open_from_gallery(evt: gr.SelectData):
-        caption = evt.value[1]
-        page = int(caption.split()[2])  # extract page number
-        open_pdf_page(page)
-
-    # Bind button click to process function
-    btn.click(
-        process,
-        inputs=query,
-        outputs=[answer_box, gallery, page_info, metrics_box, graph_output]
+    return (
+        answer,
+        images,
+        info,
+        metrics,
+        graph,
+        format_links("Research Papers", papers),
+        format_links("YouTube Videos", videos),
+        format_links("GitHub", github),
+        format_links("Docs", docs_links),
+        chat_history
     )
 
-    # Bind speak button
-    speak_btn.click(speak, inputs=answer_box, outputs=[])
 
-    # Enable clicking on gallery images
-    gallery.select(open_from_gallery)
+# ================= UI =================
+with gr.Blocks() as demo:
 
-# Launch the application
+    gr.Markdown("Grounded RAG Based LLM Assistant for Semiconductor Industry")
+
+    query = gr.Textbox(label="Ask Question")
+    answer_box = gr.Textbox(label="Answer")
+
+    voice_btn = gr.Button("Voice Input")
+    ask_btn = gr.Button("Ask")
+
+    speak_btn = gr.Button("Read Answer")
+    stop_btn = gr.Button("Stop")
+
+    gallery = gr.Gallery()
+    info = gr.JSON()
+    metrics_box = gr.JSON()
+    graph_output = gr.Image()
+
+    papers_box = gr.Markdown()
+    videos_box = gr.Markdown()
+    github_box = gr.Markdown()
+    docs_box = gr.Markdown()
+
+    history_box = gr.JSON(label="Chat History")
+
+    download_btn = gr.Button("Download Report")
+    file_output = gr.File()
+
+    # Ask query
+    ask_btn.click(
+        ask,
+        inputs=query,
+        outputs=[
+            answer_box,
+            gallery,
+            info,
+            metrics_box,
+            graph_output,
+            papers_box,
+            videos_box,
+            github_box,
+            docs_box,
+            history_box
+        ]
+    )
+
+    # Voice input
+    voice_btn.click(voice_input, outputs=query)
+
+    # Speak answer
+    def speak_wrapper(ans):
+        speak_text(ans)
+
+    speak_btn.click(speak_wrapper, inputs=answer_box, outputs=[])
+
+    # Stop speaking
+    stop_btn.click(stop_speaking)
+
+    # Download report
+    download_btn.click(
+        generate_report,
+        inputs=[answer_box, metrics_box],
+        outputs=file_output
+    )
+
 demo.launch()
